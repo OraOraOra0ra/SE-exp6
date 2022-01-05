@@ -15,9 +15,12 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import me.zhanghai.android.files.R
+import me.zhanghai.android.files.databinding.FileNameDialog1Binding
 import me.zhanghai.android.files.databinding.FileNameDialogBinding
+import me.zhanghai.android.files.databinding.FileNameDialogNameInclude1Binding
 import me.zhanghai.android.files.databinding.FileNameDialogNameIncludeBinding
 import me.zhanghai.android.files.util.asFileNameOrNull
 import me.zhanghai.android.files.util.hideTextInputLayoutErrorOnTextChange
@@ -33,30 +36,32 @@ abstract class FileNameDialogFragment : AppCompatDialogFragment() {
         get() = requireParentFragment() as Listener
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
-        MaterialAlertDialogBuilder(requireContext(), theme)
-            .setTitle(titleRes)
-            .apply {
-                _binding = onInflateBinding(context.layoutInflater)
-                binding.nameEdit.hideTextInputLayoutErrorOnTextChange(binding.nameLayout)
-                binding.nameEdit.setOnEditorConfirmActionListener { onOk() }
-                setView(binding.root)
-            }
-            .setPositiveButton(android.R.string.ok, null)
-            .setNegativeButton(android.R.string.cancel, null)
-            .create()
-            .apply {
-                window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-                // Override the listener here so that we have control over when to close the dialog.
-                setOnShowListener {
-                    getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { onOk() }
-                }
-            }
+            MaterialAlertDialogBuilder(requireContext(), theme)
+                    .setTitle(titleRes)
+                    .apply {
+                        _binding = onInflateBinding(context.layoutInflater)
+                        binding.nameEdit.hideTextInputLayoutErrorOnTextChange(binding.nameLayout)
+                        binding.nameEdit.setOnEditorConfirmActionListener { onOk() }
+                        binding.nameEdit.hint = "名称"
+                        binding.nameLayout.hint = ""
+                        setView(binding.root)
+                    }
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .create()
+                    .apply {
+                        window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+                        // Override the listener here so that we have control over when to close the dialog.
+                        setOnShowListener {
+                            getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { onOk() }
+                        }
+                    }
 
     @get:StringRes
     protected abstract val titleRes: Int
 
     protected open fun onInflateBinding(inflater: LayoutInflater): Binding =
-        Binding.inflate(inflater)
+            Binding.inflate(inflater)
 
     private fun onOk() {
         val name = name
@@ -89,15 +94,15 @@ abstract class FileNameDialogFragment : AppCompatDialogFragment() {
     protected abstract fun onOk(name: String)
 
     protected open class Binding protected constructor(
-        val root: View,
-        val nameLayout: TextInputLayout,
-        val nameEdit: EditText
+            val root: View,
+            val nameLayout: TextInputLayout,
+            val nameEdit: EditText
     ) {
         companion object {
             fun inflate(inflater: LayoutInflater): Binding {
-                val binding = FileNameDialogBinding.inflate(inflater)
+                val binding = FileNameDialog1Binding.inflate(inflater)
                 val bindingRoot = binding.root
-                val nameBinding = FileNameDialogNameIncludeBinding.bind(bindingRoot)
+                val nameBinding = FileNameDialogNameInclude1Binding.bind(bindingRoot)
                 return Binding(bindingRoot, nameBinding.nameLayout, nameBinding.nameEdit)
             }
         }
